@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.tow.Play" >
+
+    <item
+        android:id="@+id/action_lifelines"
+        android:orderInCategory="101"
+        android:showAsAction="always"
+        android:title="@string/action_lifelines" />
+
+    <item
+        android:id="@+id/action_simplify"
+        android:orderInCategory="102"
+        android:icon="@drawable/simplify_active"
+        android:showAsAction="always"
+        android:title="@string/action_simplify" />
+
+    <item
+        android:id="@+id/action_time_extender"
+        android:orderInCategory="103"
+        android:icon="@drawable/ic_action_time_active"
+        android:showAsAction="always"
+        android:title="@string/action_time_extender" />
+
+    <item
+        android:id="@+id/main_menu"
+        android:orderInCategory="104"
+        android:icon="@drawable/ic_launcher"
+        android:showAsAction="never"
+        android:title="@string/main_menu" />
+    
+</menu>
