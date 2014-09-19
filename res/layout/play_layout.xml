@@ -35,38 +35,6 @@
         android:text="@string/tvLevel"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <RadioGroup
-        android:id="@+id/rgAnswers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tvQuestion"
-        android:layout_below="@+id/tvQuestion" >
-
-        <RadioButton
-            android:id="@+id/rbAnswer1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radio_option" />
-
-        <RadioButton
-            android:id="@+id/rbAnswer2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radio_option" />
-
-        <RadioButton
-            android:id="@+id/rbAnswer3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radio_option" />
-
-        <RadioButton
-            android:id="@+id/rbAnswer4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/radio_option" />
-        </RadioGroup>
-
     <TextView
         android:id="@+id/tvTimer"
         android:layout_width="wrap_content"
@@ -95,5 +63,50 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/tvLevel"
         android:layout_alignTop="@+id/rgAnswers" />
+
+    <RadioGroup
+        android:id="@+id/rgAnswers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvQuestion"
+        android:layout_marginTop="21dp" >
+
+        <RadioButton
+            android:id="@+id/rbAnswer1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/radio_option" />
+
+        <RadioButton
+            android:id="@+id/rbAnswer2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/radio_option" />
+
+        <RadioButton
+            android:id="@+id/rbAnswer3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/radio_option" />
+
+        <RadioButton
+            android:id="@+id/rbAnswer4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/radio_option" />
+    </RadioGroup>
+
+    <ProgressBar
+        android:id="@+id/pbProgress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignLeft="@+id/rgAnswers"
+        android:layout_alignRight="@+id/progressBar1"
+        android:layout_below="@+id/rgAnswers"
+        android:minHeight="50dp"
+        android:max="10"
+        android:layout_marginTop="43dp" />
 
 </RelativeLayout>

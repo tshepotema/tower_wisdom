@@ -37,9 +37,8 @@ public class MainMenu extends Activity {
 						//Intent showProfile = new Intent("com.example.tow.PROFILE");
 						//startActivity(showProfile);
 					case 3:
-						Toast.makeText(MainMenu.this, "Settings not available", Toast.LENGTH_SHORT).show();
-						//Intent showSettings = new Intent("com.example.tow.SETTINGS");
-						//startActivity(showSettings);
+						Intent showSettings = new Intent("com.example.tow.USERPROFILE");
+						startActivity(showSettings);
 						break;
 						
 				}

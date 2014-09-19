@@ -5,13 +5,18 @@ import java.util.Random;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -25,6 +30,7 @@ public class Play extends Activity {
 	TextView tvQuestion, tvTimer,  tvUser, tvScore, tvLevel;
 	RadioGroup rgAnswers;
 	RadioButton rbAnswer1, rbAnswer2, rbAnswer3, rbAnswer4;
+	ProgressBar pbProgress;
 	
 	String[][] qnaArray = new String[10][6];
 	Integer groupID, playTimer, playTimerSeconds, currentQuestionID;
@@ -32,10 +38,17 @@ public class Play extends Activity {
 	String correctAnswer, previousAnswer;
 	String[] correctAcknowledge = {"Well Done!", "Correct!", "Yessss!", "Yupppp!", "Absolutely!"};
 	Boolean timeUp = false;
-	
+	Boolean lifeline_time, lifeline_simplify;
+		
 	Integer score, scoreWeight, scorePenalty, playDifficulty;
 	
 	Integer userID;	
+	
+	private Handler progressHandler = new Handler();
+	Menu playMenu;
+
+	SharedPreferences sharedPref;
+	Editor editor;	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,8 +57,13 @@ public class Play extends Activity {
 		
 		initializeLayout();
 		
-		//TODO: get from shared preferences
-		playDifficulty = 2; 
+		sharedPref = getSharedPreferences(UserProfile.MyPREFERENCES, Context.MODE_PRIVATE);
+		editor = sharedPref.edit();
+
+		tvUser.setText(sharedPref.getString(UserProfile.nameKey, "ttema"));
+		playDifficulty = sharedPref.getInt(UserProfile.diffKey, 2);
+
+		setGameDefaults();
 		
 		//TODO: get current score if available
 		score = 0;
@@ -173,6 +191,14 @@ public class Play extends Activity {
 		
 		playTimerCounter.cancel();	//stop the timer
 		
+		//update the progressbar
+		progressHandler.post(new Runnable() {			
+			@Override
+			public void run() {
+				pbProgress.setProgress(currentQuestionID);				
+			}
+		});
+		
 		//update the score
 		updateCurrentScore();
 		
@@ -182,7 +208,15 @@ public class Play extends Activity {
 						
 			//next group
 			groupID++;
-						
+			tvLevel.setText("Level: " + groupID);
+			
+			//save the game state
+			saveGameState();
+			
+			//reset game defaults
+			resetGameDefaults();
+			
+			//get next set of questions
 			getAllQnAs(groupID);
 			
 		} else {
@@ -249,7 +283,6 @@ public class Play extends Activity {
 							
 							Intent openMainMenu = new Intent("com.example.tow.MAINMENU");
 							startActivity(openMainMenu);
-							
 						}
 					});
 				}
@@ -257,6 +290,23 @@ public class Play extends Activity {
 	    }; 		
 		sleeper.start();
 	}
+	
+	private void setGameDefaults() {		
+		lifeline_time = true;
+		lifeline_simplify = true;		
+	}
+
+	
+	private void resetGameDefaults() {
+		if (lifeline_simplify == false) {
+			playMenu.findItem(R.id.action_simplify).setIcon(R.drawable.simplify_active);
+		}
+		if (lifeline_time == false) {
+			playMenu.findItem(R.id.action_time_extender).setIcon(R.drawable.ic_action_time_active);
+		}
+		setGameDefaults();
+	}
+	
 	
 	private void resetPlayTimer() {
 		switch (playDifficulty) {
@@ -338,36 +388,51 @@ public class Play extends Activity {
 		rbAnswer2 = (RadioButton) findViewById(R.id.rbAnswer2);
 		rbAnswer3 = (RadioButton) findViewById(R.id.rbAnswer3);
 		rbAnswer4 = (RadioButton) findViewById(R.id.rbAnswer4);
+		
+		pbProgress = (ProgressBar) findViewById(R.id.pbProgress);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.play_menu, menu);
+		playMenu = menu;
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
-		if (id == R.id.main_menu) {
-			
-			//TODO: quit game and update stats
-			
+		if (id == R.id.main_menu) {			
 			//then close the activity and open main menu
 			Intent openMainMenu = new Intent("com.example.tow.MAINMENU");
 			startActivity(openMainMenu);
 			return true;
 		}
+		if (id == R.id.action_simplify) {
+			if (lifeline_simplify == true) {
+				//simplify the game
+				
+				playMenu.findItem(R.id.action_simplify).setIcon(R.drawable.simplify);
+				
+				lifeline_simplify = false;
+			}			
+		}
+		if (id == R.id.action_time_extender) {
+			if (lifeline_time == true) {
+				//extend the time
+				playTimerCounter.cancel();
+				playTimer = playTimer * 3;
+				playTimerCounter.start();
+				playMenu.findItem(R.id.action_time_extender).setIcon(R.drawable.ic_action_time);
+				lifeline_time = false;
+			}
+		}
+		
 		return super.onOptionsItemSelected(item);
 	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		
-		//-- save the game state
-		
+	
+	private void saveGameState() {		
     	//OPEN THE DATABASE
     	TowDatabaseHelper dbHelper = new TowDatabaseHelper(Play.this);
     	SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -384,6 +449,15 @@ public class Play extends Activity {
 
         //CLOSE THE DATABASE
         db.close();
-        dbHelper.close();		
+        dbHelper.close();				
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		playTimerCounter.cancel();
+		//-- save the game state
+		saveGameState();
+		finish();
 	}		
 }
