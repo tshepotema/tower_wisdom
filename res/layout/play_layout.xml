@@ -7,12 +7,33 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.tow.MainActivity$PlaceholderFragment" >
-
+    
     <TextView
-        android:id="@+id/tvQuestion"
+        android:id="@+id/tvUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/tvQuestion" />
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:text="@string/tvUser"
+        android:textAppearance="?android:attr/textAppearanceSmall" />        
+    
+    <TextView
+        android:id="@+id/tvScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/tvScore"
+        android:textAppearance="?android:attr/textAppearanceSmall" />    
+        
+    <TextView
+        android:id="@+id/tvLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:text="@string/tvLevel"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <RadioGroup
         android:id="@+id/rgAnswers"
@@ -46,15 +67,6 @@
             android:text="@string/radio_option" />
         </RadioGroup>
 
-    <ProgressBar
-        android:id="@+id/progressBar1"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/rgAnswers"
-        android:layout_marginTop="14dp" />
-
     <TextView
         android:id="@+id/tvTimer"
         android:layout_width="wrap_content"
@@ -62,8 +74,26 @@
         android:layout_alignBottom="@+id/progressBar1"
         android:layout_alignRight="@+id/progressBar1"
         android:layout_marginBottom="23dp"
-        android:layout_marginRight="22dp"
+        android:layout_marginRight="24dp"
         android:text="@string/tvTimer"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/tvQuestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvUser"
+        android:layout_below="@+id/tvUser"
+        android:layout_marginTop="14dp"
+        android:text="@string/tvQuestion"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/tvLevel"
+        android:layout_alignTop="@+id/rgAnswers" />
 
 </RelativeLayout>

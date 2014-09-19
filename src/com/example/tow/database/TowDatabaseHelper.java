@@ -15,15 +15,15 @@ public class TowDatabaseHelper extends SQLiteOpenHelper {
 	//called during creation of the database
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+		ScoresTable.onCreate(db);
 		QuestionsTable.onCreate(db);
-		AnswersTable.onCreate(db);
 	}
 
 	//called during the upgrade of the database
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		ScoresTable.onUpgrade(db, oldVersion, newVersion);
 		QuestionsTable.onUpgrade(db, oldVersion, newVersion);
-		AnswersTable.onUpgrade(db, oldVersion, newVersion);
 	}
 
 }
