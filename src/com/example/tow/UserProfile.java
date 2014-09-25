@@ -101,15 +101,29 @@ public class UserProfile extends Activity {
 		return true;
 	}
 
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-		if (id == R.id.main_menu) {
+		switch (item.getItemId()) {
+		case R.id.main_menu:
 			Intent openMainMenu = new Intent("com.example.tow.MAINMENU");
 			startActivity(openMainMenu);
 			return true;
+		case R.id.action_play:
+			Intent playGame = new Intent("com.example.tow.PLAY");
+			startActivity(playGame);
+			return true;
+		case R.id.action_leaderboard:
+			Intent showLeaderboard = new Intent("com.example.tow.LEADERBOARD");
+			startActivity(showLeaderboard);
+			return true;
+		case R.id.action_preferences:
+			return super.onOptionsItemSelected(item);
+		case R.id.action_profile:
+			Intent showUserDetails = new Intent("com.example.tow.PLAYERDETAILS");
+			startActivity(showUserDetails);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

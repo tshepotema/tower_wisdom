@@ -23,7 +23,7 @@ public class ScoresTable {
 	
 	public static void onCreate(SQLiteDatabase database) {
 		database.execSQL(DATABASE_CREATE);
-		Log.d(TAG, "scores table has been created");
+		Log.d(TAG, TABLE_SCORES + " table has been created");
 	}
 	
 	public static void onUpgrade(SQLiteDatabase database, int oldVer, int newVer) {

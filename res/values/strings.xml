@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">Tower of Wisdom</string>
+    <string name="app_leaderboard">Leaderboard</string>
+    <string name="app_profile_view">Player Profile</string>
     <string name="app_profile">Profile Settings</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
@@ -20,6 +22,9 @@
     
     <string name="action_settings">Settings</string>
     <string name="main_menu">Main Menu</string>
+    <string name="menu_leaderboard">Leaderboard</string>
+    <string name="menu_preferences">Preferences</string>
+    <string name="menu_profile">User Profile</string>
     
     <string name="action_lifelines">Lifelines</string>
     <string name="action_simplify">Simplify</string>
@@ -32,5 +37,10 @@
     <string name="rbDifficult">Difficul</string>
     <string name="tvAvator">Avator</string>        
     <string name="btUpdate">Update</string>        
+
+    <string name="tvLeaderRanking">Player currently ranked #100</string>
+    
+    <string name="tvProfileUsername">Username: Guest</string>
+    <string name="tvProfilePoints">Points: 100</string>
     
 </resources>

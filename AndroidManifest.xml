@@ -44,6 +44,22 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Leaderboard"
+            android:label="@string/app_leaderboard">
+            <intent-filter>
+                <action android:name="com.example.tow.LEADERBOARD" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".PlayerDetails"
+            android:label="@string/app_profile_view">
+            <intent-filter>
+                <action android:name="com.example.tow.PLAYERDETAILS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".UserProfile"
             android:label="@string/app_profile">
             <intent-filter>

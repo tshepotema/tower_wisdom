@@ -32,7 +32,7 @@ public class QuestionsTable {
 			COLUMN_E + " TEXT NOT NULL);";
 	
 	public static void onCreate(SQLiteDatabase database) {
-		Log.d(TAG, "Try to create table with -> " + DATABASE_CREATE);
+		//Log.d(TAG, "Try to create table with -> " + DATABASE_CREATE);
 		database.execSQL(DATABASE_CREATE);
 		Log.d(TAG, "Questions table has been created");
 	}

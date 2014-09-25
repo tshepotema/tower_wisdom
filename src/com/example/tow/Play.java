@@ -60,27 +60,39 @@ public class Play extends Activity {
 		sharedPref = getSharedPreferences(UserProfile.MyPREFERENCES, Context.MODE_PRIVATE);
 		editor = sharedPref.edit();
 
-		tvUser.setText(sharedPref.getString(UserProfile.nameKey, "ttema"));
+		tvUser.setText(sharedPref.getString(UserProfile.nameKey, "Guest"));
 		playDifficulty = sharedPref.getInt(UserProfile.diffKey, 2);
 
 		setGameDefaults();
 		
-		//TODO: get current score if available
-		score = 0;
+		userID = 1;		
+		score = 0;		
+		groupID = 1;		
 		
-		//TODO: get the correct User ID
-		userID = 1;
+		SQLiteDatabase db;
+		db = openOrCreateDatabase(ScoresTable.DATABASE_TOW, SQLiteDatabase.CREATE_IF_NECESSARY, null);
+		db.setVersion(1);
+		db.setLocale(Locale.getDefault());
 		
-		//TODO: get the correct Group ID
-		groupID = 1;
+		//see also - http://developer.android.com/reference/android/database/sqlite/SQLiteQueryBuilder.html		
+		Cursor cur = db.query(ScoresTable.TABLE_SCORES, null, null, null, null, null, null, "1");
+		cur.moveToFirst();
+
+		while (cur.isAfterLast() == false) {
+			userID = cur.getInt(0);		// userID
+			score = cur.getInt(1); 		// score
+			groupID = cur.getInt(2); 	// groupID
+			
+			cur.moveToNext();
+		}
+		cur.close();				
 		
-		//TODO: initialize the time per question
 		resetPlayTimer();		
 		
 		playTimer = playTimerSeconds * 1000;
 		
 		//initialize other variables
-		previousAnswer = "just_for_debugging_ne";
+		previousAnswer = "CompensatingFor_a_Lame_Bug_I_Found_sigh";
 		
 		//load the QnAs from storage
 		getAllQnAs(groupID);
@@ -412,24 +424,104 @@ public class Play extends Activity {
 		if (id == R.id.action_simplify) {
 			if (lifeline_simplify == true) {
 				//simplify the game
-				
-				playMenu.findItem(R.id.action_simplify).setIcon(R.drawable.simplify);
-				
+				lifeLineSimplifyGame();				
+				playMenu.findItem(R.id.action_simplify).setIcon(R.drawable.simplify);				
 				lifeline_simplify = false;
 			}			
 		}
 		if (id == R.id.action_time_extender) {
 			if (lifeline_time == true) {
 				//extend the time
-				playTimerCounter.cancel();
-				playTimer = playTimer * 3;
-				playTimerCounter.start();
+				lifeLineExtendGameTime();
 				playMenu.findItem(R.id.action_time_extender).setIcon(R.drawable.ic_action_time);
 				lifeline_time = false;
 			}
+		}		
+		return super.onOptionsItemSelected(item);
+	}
+	
+	private void lifeLineExtendGameTime() {
+		playTimerCounter.cancel();
+				
+		new CountDownTimer(3000, 1000) {
+		     public void onTick(long millisUntilFinished) {
+		    	 playTimerSeconds = (int) (millisUntilFinished / 1000);
+		    	 timeUp = false;
+		     }	
+		     public void onFinish() {
+		 		playTimerCounter.start();
+		     }
+		}.start();				
+		
+	}
+	
+	private void lifeLineSimplifyGame() {
+		Integer incorrectAnswersRemoved = 0;
+		Integer incorrectAnswersCount = 0;
+		String opt1 = rbAnswer1.getText().toString();
+		String opt2 = rbAnswer2.getText().toString();
+		String opt3 = rbAnswer3.getText().toString();
+		String opt4 = rbAnswer4.getText().toString();
+		String[] incorrectOptions = new String[3];
+		String incorrectOpt1 = "";
+		String incorrectOpt2 = "";
+		if (!opt1.equals(correctAnswer)) {
+			incorrectOptions[incorrectAnswersCount] = opt1;
+			incorrectAnswersCount++;
+		}
+		if (!opt2.equals(correctAnswer)) {
+			incorrectOptions[incorrectAnswersCount] = opt2;
+			incorrectAnswersCount++;
+		}
+		if (!opt3.equals(correctAnswer)) {
+			incorrectOptions[incorrectAnswersCount] = opt3;
+			incorrectAnswersCount++;
+		}
+		if (!opt4.equals(correctAnswer)) {
+			incorrectOptions[incorrectAnswersCount] = opt4;
+			incorrectAnswersCount++;
 		}
 		
-		return super.onOptionsItemSelected(item);
+		//choose random incorrect answers to remove
+		Random randIncorrect = new Random();
+		while (incorrectAnswersRemoved < 2) {
+			int randIncorrectAns = randIncorrect.nextInt(3);
+			if (incorrectAnswersRemoved == 0) {
+				incorrectOpt1 = incorrectOptions[randIncorrectAns];
+				if (incorrectOpt1.equals(opt1)) {
+					rbAnswer1.setEnabled(false);
+				}
+				else if (incorrectOpt1.equals(opt2)) {
+					rbAnswer2.setEnabled(false);
+				}
+				else if (incorrectOpt1.equals(opt3)) {
+					rbAnswer3.setEnabled(false);
+				}
+				else if (incorrectOpt1.equals(opt4)) {
+					rbAnswer4.setEnabled(false);
+				}
+				incorrectAnswersRemoved++;
+			} else {
+				incorrectOpt2 = incorrectOptions[randIncorrectAns];
+				if (incorrectOpt2.equals(incorrectOpt1)) {
+					//continue looking for a random
+				} else {
+					if (incorrectOpt2.equals(opt1)) {
+						rbAnswer1.setEnabled(false);
+					}
+					else if (incorrectOpt2.equals(opt2)) {
+						rbAnswer2.setEnabled(false);
+					}
+					else if (incorrectOpt2.equals(opt3)) {
+						rbAnswer3.setEnabled(false);
+					}
+					else if (incorrectOpt2.equals(opt4)) {
+						rbAnswer4.setEnabled(false);
+					}							
+					incorrectAnswersRemoved++;
+				}
+			}
+		}		
 	}
 	
 	private void saveGameState() {		
@@ -437,15 +529,15 @@ public class Play extends Activity {
     	TowDatabaseHelper dbHelper = new TowDatabaseHelper(Play.this);
     	SQLiteDatabase db = dbHelper.getWritableDatabase();
     	
-    	ContentValues values = new ContentValues();
+    	ContentValues valuesScore = new ContentValues();
     	
         //create content values
-        values.put(ScoresTable.COLUMN_ID, userID);
-        values.put(ScoresTable.COLUMN_SCORE, score);
-        values.put(ScoresTable.COLUMN_GROUPID, groupID);
+    	valuesScore.put(ScoresTable.COLUMN_ID, userID);
+    	valuesScore.put(ScoresTable.COLUMN_SCORE, score);
+    	valuesScore.put(ScoresTable.COLUMN_GROUPID, groupID);
         
         //insert the data into the database using a prepared statement
-        db.insertWithOnConflict(ScoresTable.TABLE_SCORES, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        db.insertWithOnConflict(ScoresTable.TABLE_SCORES, null, valuesScore, SQLiteDatabase.CONFLICT_REPLACE);
 
         //CLOSE THE DATABASE
         db.close();

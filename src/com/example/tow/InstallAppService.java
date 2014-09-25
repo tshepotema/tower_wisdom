@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.tow.database.ScoresTable;
 import com.example.tow.database.TowDatabaseHelper;
 import com.example.tow.database.QuestionsTable;
 
@@ -24,7 +25,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class InstallAppService {
 	private Context installServiceContext;
@@ -74,7 +74,8 @@ public class InstallAppService {
                 result = "Tshepo - Error connecting to remote resource";
 
         } catch (Exception e) {
-            Log.d("InputStream", e.getLocalizedMessage());
+        	e.printStackTrace();
+            //Log.d("InputStream", e.getLocalizedMessage());
         }
 
         return result;
@@ -87,7 +88,7 @@ public class InstallAppService {
         while((line = bufferedReader.readLine()) != null)
             result += line;
 
-        inputStream.close();
+        	inputStream.close();
         return result;
 
     }
@@ -106,21 +107,22 @@ public class InstallAppService {
             return GET(urls[0]);
         }
 
-        // onPostExecute displays the results of the AsyncTask.
+        // onPostExecute process the results of the AsyncTask.
         @Override
         protected void onPostExecute(String result) {
-            Log.d("postExecute", "starting to PostExecute");
             try {
             	
             	//OPEN THE DATABASE
             	TowDatabaseHelper dbHelper = new TowDatabaseHelper(this.syncContext);
             	SQLiteDatabase db = dbHelper.getWritableDatabase();
             	
+            	//dbHelper.onCreate(db);	//TT. after dbg
+            	
             	ContentValues values = new ContentValues();
             	            	
                 JSONObject resultObj = new JSONObject(result);
                 JSONArray response = resultObj.getJSONArray("response");
-                Log.d("postExecute", "trying PostExecute on [" + response.length() + "] items");
+                //Log.d("postExecute", "trying PostExecute on [" + response.length() + "] items");
                 for (int i = 0; i < response.length(); i++) {
                     JSONObject dealObj = response.getJSONObject(i);
 
@@ -146,8 +148,29 @@ public class InstallAppService {
                     //insert the data into the database using a prepared statement
                     db.insertWithOnConflict(QuestionsTable.TABLE_QUESTIONS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
                     
-                    Log.d("postExecute", " --> question =  [" + question + "] option E = " + optionE);                                        
+                    //Log.d("postExecute", "postExecute --> question =  [" + question + "] option E = " + optionE);                                        
                 }
+                
+                
+            	ContentValues values_userdetails = new ContentValues();
+            	
+                JSONObject resultObjUserDetails = new JSONObject(result);
+                JSONArray responseUserDetails = resultObjUserDetails.getJSONArray("user");
+                //Log.d("postExecute", "userDetails PostExecute on [" + responseUserDetails.length() + "] items");
+                for (int i = 0; i < responseUserDetails.length(); i++) {
+                    JSONObject userObj = response.getJSONObject(i);
+
+                    Integer userID = userObj.getInt("user_id");
+
+                    //create content values
+                    values_userdetails.put(ScoresTable.COLUMN_ID, userID);
+                    values_userdetails.put(ScoresTable.COLUMN_SCORE, 0);
+                    values_userdetails.put(ScoresTable.COLUMN_GROUPID, 1);
+                    
+                    //insert the data into the database using a prepared statement
+                    db.insertWithOnConflict(ScoresTable.TABLE_SCORES, null, values_userdetails, SQLiteDatabase.CONFLICT_REPLACE);
+                    
+                }                
                 
                 //CLOSE THE DATABASE
                 db.close();

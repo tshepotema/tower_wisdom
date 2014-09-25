@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.example.tow.ImageAdapter;
 
@@ -29,23 +28,22 @@ public class MainMenu extends Activity {
 						startActivity(playGame);
 						break;
 					case 1:
-						Toast.makeText(MainMenu.this, "Leaderboard not available", Toast.LENGTH_SHORT).show();
-						//Intent showLeaderboard = new Intent("com.example.tow.LEADERBOARD");
-						//startActivity(showLeaderboard);
+						Intent showLeaderboard = new Intent("com.example.tow.LEADERBOARD");
+						startActivity(showLeaderboard);
+						break;
 					case 2:
-						Toast.makeText(MainMenu.this, "Profile not available", Toast.LENGTH_SHORT).show();
-						//Intent showProfile = new Intent("com.example.tow.PROFILE");
-						//startActivity(showProfile);
+						Intent showUserDetails = new Intent("com.example.tow.PLAYERDETAILS");
+						startActivity(showUserDetails);
+						break;
 					case 3:
 						Intent showSettings = new Intent("com.example.tow.USERPROFILE");
 						startActivity(showSettings);
 						break;
 						
 				}
-			}
-	        
-	        
+			}	        	        
 	    });
+	    
 	}
 	
 }
